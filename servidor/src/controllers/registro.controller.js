@@ -4,7 +4,18 @@ import { pool } from '../db/db.js'
 /* Modulo de obtener todos los registros */
 export const getRegistros = async (req, res) => {
   try {
-    const [result] = await pool.query("SELECT * FROM libros");
+    const [result] = await pool.query(`
+    SELECT 
+      registros.id,
+      alumnos.nombre AS alumno,
+      libros.titulo AS libro,
+      registros.inicio,
+      registros.fin,
+      entregados.estado AS estado
+    FROM registros
+    JOIN alumnos ON registros.id_alumno = alumnos.id
+    JOIN libros ON registros.id_libro = libros.id
+    JOIN entregados ON registros.id_entregado = entregados.id`);
 
     res.json({
       id: result.insertId,
@@ -20,7 +31,19 @@ export const getRegistros = async (req, res) => {
 export const getRegistro = async (req, res) => {
   try {
     const { id } = req.params
-    const [result] = await pool.query("SELECT * FROM libros WHERE id = ?", [
+    const [result] = await pool.query(`
+    SELECT 
+      registros.id,
+      alumnos.nombre AS alumno,
+      libros.titulo AS libro,
+      registros.inicio,
+      registros.fin,
+      entregado.estado_entrega AS estado
+    FROM registros
+    JOIN alumnos ON registros.id_alumno = alumnos.id
+    JOIN libros ON registros.id_libro = libros.id
+    JOIN entregados ON registros.id_entregado = entregados.id
+    WHERE id = ?`, [
       id,
     ]);
 

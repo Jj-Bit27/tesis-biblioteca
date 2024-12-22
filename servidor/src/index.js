@@ -10,6 +10,7 @@ import deleteRouter from './routes/delete.routes.js'
 import registroRouter from './routes/registros.routes.js'
 import entregadoRouter from './routes/entregado.routes.js'
 import obtenerRouter from './routes/obtener.routes.js'
+import busquedaRouter from './routes/busqueda.routes.js'
 
 dotenv.config()
 
@@ -27,10 +28,7 @@ server.use('/api/delete', deleteRouter)
 server.use('/api/get', obtenerRouter)
 server.use('/api/registros', registroRouter)
 server.use('/api/entregados', entregadoRouter)
-
-// Ejemplo: server.use('/api/alumnos', alumnoRoute)
-
-// Ejemplo de URL: http://localhost:5000/api/registro/add
+server.use('/api/busqueda', busquedaRouter)
 
 /* Otras rutas que no sean las antes dichas */
 server.use('*', (req, res) => {

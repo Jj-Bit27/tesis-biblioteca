@@ -13,9 +13,9 @@ import {
 const router = express.Router();
 
 router.delete('/alumno/:id', deleteAlumno);
-router.delete('/libros/:id', deleteLibro);
-router.delete('/categorias/:id', deleteCategoria);
-router.delete('/editoriales/:id', deleteEditorial);
-router.delete('/autores/:id', deleteAutor);
+router.delete('/libro/:id', deleteLibro);
+router.delete('/categoria/:id', deleteCategoria);
+router.delete('/editorial/:id', deleteEditorial);
+router.delete('/autor/:id', deleteAutor);
 
 export default router;

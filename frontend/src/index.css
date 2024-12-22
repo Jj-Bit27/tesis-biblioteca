@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#E4E8ED] text-[#2C3E50] font-inter mt-16;
+  @apply bg-[#E4E8ED] text-[#2C3E50] font-inter mt-auto;
 }
 
 @layer utilities {

@@ -10,7 +10,7 @@ export default function PasswordForm({ onValidate }) {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="bg-white/[0.005] bg-[#b2b6bb] p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white/[0.005] bg-[#c7ccd4] p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
           Acceso a la página
         </h2>

@@ -19,9 +19,9 @@ import { categoriaSchema } from '../schemas/categorias.schema.js';
 const router = express.Router();
 
 router.post('/alumno', validateSchema(alumnoSchema), addAlumno);
-router.post('/libros', validateSchema(libroSchema), addLibro);
-router.post('/categorias', validateSchema(categoriaSchema), addCategoria);
-router.post('/editoriales', validateSchema(editorialSchema), addEditorial);
-router.post('/autores', validateSchema(autorSchema), addAutor);
+router.post('/libro', validateSchema(libroSchema), addLibro);
+router.post('/categoria', validateSchema(categoriaSchema), addCategoria);
+router.post('/editorial', validateSchema(editorialSchema), addEditorial);
+router.post('/autor', validateSchema(autorSchema), addAutor);
 
 export default router;

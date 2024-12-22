@@ -20,7 +20,7 @@ const router = express.Router();
 router.get("/alumnos", getAlumnos);
 router.get("/alumno/:id", getAlumno);
 router.get("/libros", getLibros);
-router.get("/libros/:id", getLibro);
+router.get("/libro/:id", getLibro);
 router.get("/categorias", getCategorias);
 router.get("/categoria/:id", getCategoria);
 router.get("/editoriales", getEditorials);

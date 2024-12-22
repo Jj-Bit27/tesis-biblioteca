@@ -1,5 +1,5 @@
-import { Menus } from "../assets/Menuitems.jsx";
-import Logo from "../assets/icon-biblioteca.png";
+import { Menus } from "../../assets/Menuitems.jsx";
+import Logo from "../../assets/icon-biblioteca.png";
 import DesktopMenu from "./Navbar.jsx";
 import MobMenu from "./MobMenu.jsx";
 

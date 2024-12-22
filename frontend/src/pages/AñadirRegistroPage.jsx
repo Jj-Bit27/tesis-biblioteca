@@ -1,14 +1,27 @@
-import AdminForm from "../components/AdminForm.jsx";
-import { useState } from "react";
+import AdminForm from "../components/Formularios/AdminForm.jsx";
+import { useState, useEffect } from "react";
+import RegistroForm from "../components/Formularios/RegistroForm.jsx";
+import RegisterList from "../components/Listados/RegisterList.jsx";
 
 export default function AgregarRegistros() {
+  /* Estados para el formulario de admin */
   const [isAuthorized, setIsAuthorized] = useState(false);
+
+  /* Estados para el formulario de registro */
   const [idAlumno, setIdAlumno] = useState("");
   const [idLibro, setIdLibro] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaTermino, setFechaTermino] = useState("");
   const [idEntregado, setIdEntregado] = useState("");
 
+  /* Estados para los datos de la base de datos */
+  const [alumnos, setAlumnos] = useState([]);
+  const [libros, setLibros] = useState([]);
+  const [entregados, setEntregados] = useState([]);
+  const [notification, setNotification] = useState("");
+  const [error, setError] = useState("");
+
+  /* Verificacion del formulario del admin */
   const handleValidation = (clave) => {
     if (clave === "123456") {
       setIsAuthorized(true);
@@ -17,34 +30,70 @@ export default function AgregarRegistros() {
     }
   };
 
-  const guardarRegistro = async (e) => {
-    e.preventDefault(); // Previene la recarga de la página
-    try {
-      const response = await fetch("http://localhost:5000/api/registros/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id_alumno: idAlumno,
-          id_libro: idLibro,
-          inicio: fechaInicio,
-          fin: fechaTermino,
-          id_entregado: idEntregado,
-        }),
-      });
+  /* Obtener los datos para ponerlo en el dropmenu */
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const responseAlumnos = await fetch(
+          "http://localhost:5000/api/get/alumnos"
+        );
+        const responseLibros = await fetch(
+          "http://localhost:5000/api/get/libros"
+        );
+        const responseEntregados = await fetch(
+          "http://localhost:5000/api/entregados/gets"
+        );
 
-      console.log(response);
-
-      if (!response.ok) {
-        throw new Error("Error al guardar el registro");
+        if (
+          !responseAlumnos.ok &&
+          !responseLibros.ok &&
+          !responseEntregados.ok
+        ) {
+          throw new Error("Error al obtener los datos");
+        }
+        const { result } = await responseAlumnos.json();
+        setAlumnos(result);
+        const { result: resultLibros } = await responseLibros.json();
+        setLibros(resultLibros);
+        const { result: resultEntregados } = await responseEntregados.json();
+        setEntregados(resultEntregados);
+      } catch (err) {
+        setError(err.message);
       }
+    };
+    fetchApi();
+  }, []);
 
-      const data = await response.json();
-      alert("Registro guardado exitosamente: " + JSON.stringify(data));
-    } catch (error) {
-      alert("Hubo un error: " + error.message + " No jala we");
-    }
+  /* Guardar los datos en la base de datos */
+  const guardarRegistro = (e) => {
+    e.preventDefault();
+    const nuevoRegistro = {
+      id_alumno: idAlumno,
+      id_libro: idLibro,
+      inicio: fechaInicio,
+      fin: fechaTermino,
+      id_entregado: idEntregado,
+    };
+
+    fetch(`http://localhost:5000/api/registros/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(nuevoRegistro),
+    })
+      .then((response) => {
+        if (response.ok) {
+          setNotification("true");
+        } else {
+          setNotification("error");
+        }
+        setTimeout(() => setNotification(""), 3000); // Notificación desaparece después de 3 segundos
+      })
+      .catch((error) => {
+        console.error("Error al guardar el registro:", error);
+        setNotification("Error al guardar el registro.");
+      });
   };
 
   return (
@@ -54,104 +103,24 @@ export default function AgregarRegistros() {
           <AdminForm onValidate={handleValidation} />
         </div>
       ) : (
-        <div className="max-w-4xl mx-auto my-8 p-6 bg-white/[0.005] bg-[#b2b6bb] rounded-lg shadow-lg">
-          <form
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-            onSubmit={guardarRegistro}
-          >
-            {/* ID Alumno */}
-            <div className="col-span-2 sm:col-span-1">
-              <label
-                htmlFor="idAlumno"
-                className="block text-sm font-medium text-gray-900 mb-1"
-              >
-                ID Alumno:
-              </label>
-              <input
-                type="text"
-                id="idAlumno"
-                placeholder="ID del alumno"
-                className="w-full px-3 py-1.5 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-slate-200"
-                onChange={(event) => setIdAlumno(event.target.value)}
-              />
-            </div>
-
-            {/* ID Libro */}
-            <div className="col-span-2 sm:col-span-1">
-              <label
-                htmlFor="idLibro"
-                className="block text-sm font-medium text-gray-900 mb-1"
-              >
-                ID Libro:
-              </label>
-              <input
-                type="text"
-                id="idLibro"
-                placeholder="ID del libro"
-                className="w-full px-3 py-1.5 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-slate-200"
-                onChange={(event) => setIdLibro(event.target.value)}
-              />
-            </div>
-
-            {/* Fecha de Inicio */}
-            <div className="sm:col-span-1">
-              <label
-                htmlFor="fechaInicio"
-                className="block text-sm font-medium text-gray-900 mb-1"
-              >
-                Fecha de Inicio:
-              </label>
-              <input
-                type="date"
-                id="fechaInicio"
-                className="w-full px-3 py-1 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-slate-200"
-                onChange={(event) => setFechaInicio(event.target.value)}
-              />
-            </div>
-
-            {/* Fecha de Finalización */}
-            <div className="sm:col-span-1">
-              <label
-                htmlFor="fechaTermino"
-                className="block text-sm font-medium text-gray-900 mb-1"
-              >
-                Fecha de Término:
-              </label>
-              <input
-                type="date"
-                id="fechaTermino"
-                className="w-full px-3 py-1 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-slate-200"
-                onChange={(event) => setFechaTermino(event.target.value)}
-              />
-            </div>
-
-            {/* ID Entregado */}
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="idEntregado"
-                className="block text-sm font-medium text-gray-900 mb-1"
-              >
-                ID Entregado:
-              </label>
-              <input
-                type="text"
-                id="idEntregado"
-                placeholder="ID del entregado"
-                className="w-full px-3 py-1.5 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-slate-200"
-                onChange={(event) => setIdEntregado(event.target.value)}
-              />
-            </div>
-
-            {/* Botón de Guardar */}
-            <div className="col-span-4">
-              <button
-                type="submit"
-                className="w-full px-6 py-2 bg-slate-500 text-white font-semibold rounded-md hover:bg-slate-600"
-              >
-                Guardar Registro
-              </button>
-            </div>
-          </form>
+        <div className="mt-24">
+          <RegistroForm
+            idAlumno={idAlumno}
+            idLibro={idLibro}
+            idEntregado={idEntregado}
+            setIdAlumno={setIdAlumno}
+            setIdLibro={setIdLibro}
+            setFechaInicio={setFechaInicio}
+            setFechaTermino={setFechaTermino}
+            setIdEntregado={setIdEntregado}
+            alumnos={alumnos}
+            libros={libros}
+            entregados={entregados}
+            guardarRegistro={guardarRegistro}
+            notification={notification}
+            error={error}
+          />
+          <RegisterList />
         </div>
       )}
     </div>
